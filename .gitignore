@@ -1,0 +1,5 @@
+node_modules/
+db_main.js
+dump.rdb
+package-lock.json
+redis_main.js
