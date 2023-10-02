@@ -4,7 +4,7 @@
 
 import { MongoClient } from 'mongodb';
 
-const HOST = process.env.DB_HOST || 'localhost';
+const HOST = process.env.DB_HOST || '127.0.0.1';
 const PORT = process.env.DB_PORT || 27017;
 const DB_NAME = process.env.DB_DATABASE || 'files_manager';
 
@@ -13,13 +13,12 @@ const dbUri = `mongodb://${HOST}:${PORT}`;
 class DBClient {
   constructor() {
     console.log(dbUri);
-    this.client = new MongoClient(dbUri, { useUnifiedTopology: true, newUrlParser: true });
+    this.client = new MongoClient(dbUri, { useUnifiedTopology: true });
     this.client.connect().then(() => {
       this.db = this.client.db(DB_NAME);
-      console.log('in Then');
     }).catch((err) => {
-      console.log('In catch');
-      console.log(err.message);
+      console.error(err.message);
+      this.db = false;
     });
   }
 
