@@ -38,17 +38,21 @@ class AuthController {
       .catch((err) => console.log(err));
   }
 
-  static async getDisconnect(req, res) {
+  static getDisconnect(req, res) {
     const token = req.headers['x-token'];
     const key = `auth_${token}`;
 
-    const userId = await redisClient.get(key);
-    if (!userId) {
-      res.status(401).json({ error: 'Unauthorized' });
-      return;
-    }
-    await redisClient.del(key);
-    res.status(204).json({});
+    redisClient.get(key)
+      .then((userId) => {
+        if (!userId) {
+          res.status(401).json({ error: 'Unauthorized' });
+          return;
+        }
+        (async () => {
+          await redisClient.del(key);
+          res.status(204).json({});
+        })();
+      }).catch((err) => console.log(err));
   }
 }
 
