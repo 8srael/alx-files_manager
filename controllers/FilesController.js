@@ -107,7 +107,6 @@ class FilesComtroller {
           type,
           isPublic,
           parentId: parentId || 0,
-          localPath: fileName,
         });
       }).catch((err) => console.log(err));
     }
