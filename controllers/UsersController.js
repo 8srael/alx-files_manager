@@ -18,18 +18,19 @@ class UsersController {
     }
     const users = dbClient.db.collection('users');
 
-    users.findOne({ email }, (err, user) => {
-      if (err) throw err;
-      if (user) {
-        res.status(400).json({ error: 'Already exist' });
-        return;
-      }
-      users.insertOne({
-        email,
-        password: sha1(password),
-      }).then((result) => res.status(201).json({ id: result.insertedId, email }))
-        .catch((err) => console.log(err));
-    });
+    users.findOne({ email })
+      .then((user) => {
+        if (user) {
+          res.status(400).json({ error: 'Already exist' });
+          return;
+        }
+        users.insertOne({
+          email,
+          password: sha1(password),
+        }).then((result) => res.status(201).json({ id: result.insertedId, email }))
+          .catch((err) => console.log(err));
+      })
+      .catch((err) => console.log(err));
   }
 }
 
