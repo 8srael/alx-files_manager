@@ -20,17 +20,20 @@ class AuthController {
     const authStr = authorization.split(' ')[1];
     const buff = Buffer.from(authStr, 'base64');
     const credentials = buff.toString('utf-8').split(':');
-    const [email, password] = credentials;
+    if (credentials.length !== 2) {
+      res.status(401).json({ error: 'Unauthorized' });
+      return;
+    }
 
     const users = dbClient.db.collection('users');
-    users.findOne({ email, password: sha1(password) })
+    users.findOne({ email: credentials[0], password: sha1(credentials[1]) })
       .then((user) => {
         if (!user) {
           res.status(401).json({ error: 'Unauthorized' });
         }
         const key = `auth_${uuidv4()}`;
         redisClient.set(key, user._id.toString(), 86400);
-        res.status(200).json({ token: key });
+        res.status(200).json({ token: key.substring(5) });
       })
       .catch((err) => console.log(err));
   }
