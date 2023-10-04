@@ -52,7 +52,7 @@ class FilesController {
     }
     const files = dbClient.db.collection('files');
     if (parentId) {
-      const file = await files.findOne({ _id: ObjectID(parentId) });
+      const file = await files.findOne({ _id: ObjectID(parentId), userId: user._id });
       if (!file) {
         res.status(400).json({ error: 'Parent not found' });
         return;
@@ -82,9 +82,9 @@ class FilesController {
         });
       }).catch((err) => console.log(err));
     } else {
-      const filePath = process.env.FOLDER_PATH || '/tmp/files_manager';
+      const filePath = process.env.FOLDER_PATH || 'C:/Users/IsraelKouassi/Documents/tmp/files_manager';
       const fileName = `${filePath}/${uuidv4()}`;
-      const buff = Buffer.from(data, 'base64');
+      const buff = Buffer.from(data, 'base64', 'utf-8');
 
       try {
         await fs.writeFile(fileName, buff, 'utf-8');
