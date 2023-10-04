@@ -67,6 +67,7 @@ class FilesController {
           name,
           type,
           parentId: parentId || 0,
+          isPublic,
         },
       ).then((result) => {
         res.status(201).json({
@@ -79,7 +80,7 @@ class FilesController {
         });
       }).catch((err) => console.log(err));
     } else {
-      const filePath = process.env.FOLDER_PATH || 'C:/Users/IsraelKouassi/Documents/tmp/files_manager';
+      const filePath = process.env.FOLDER_PATH || '/tmp/files_manager';
       const fileName = `${filePath}/${uuidv4()}`;
       const buff = Buffer.from(data, 'base64', 'utf-8');
 
