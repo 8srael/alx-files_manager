@@ -87,11 +87,7 @@ class FilesController {
       const buff = Buffer.from(data, 'base64');
 
       try {
-        try {
-          await fs.mkdir(filePath, { recursive: true });
-        } catch (err) {
-          // it throws error if folder already exists
-        }
+        await fs.mkdir(filePath, { recursive: true });
         await fs.writeFile(fileName, buff, 'utf-8');
       } catch (err) {
         console.log(err);
