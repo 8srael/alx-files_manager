@@ -54,12 +54,10 @@ class FilesController {
     if (parentId) {
       const file = await files.findOne({ _id: ObjectID(parentId), userId: user._id });
       if (!file) {
-        res.status(400).json({ error: 'Parent not found' });
-        return;
+        return res.status(400).json({ error: 'Parent not found' });
       }
       if (file.type !== 'folder') {
-        res.status(400).json({ error: 'Parent is not a folder' });
-        return;
+        return res.status(400).json({ error: 'Parent is not a folder' });
       }
     }
     if (type === 'folder') {
@@ -68,7 +66,6 @@ class FilesController {
           userId: user._id,
           name,
           type,
-          isPublic,
           parentId: parentId || 0,
         },
       ).then((result) => {
