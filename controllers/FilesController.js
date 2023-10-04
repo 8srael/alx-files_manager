@@ -11,7 +11,7 @@ import { promises as fs } from 'fs';
 import redisClient from '../utils/redis';
 import dbClient from '../utils/db';
 
-class FilesComtroller {
+class FilesController {
   static async getUser(req) {
     const token = req.headers['x-token'];
     const userId = await redisClient.get(`auth_${token}`);
@@ -27,7 +27,7 @@ class FilesComtroller {
   }
 
   static async postUpload(req, res) {
-    const user = await FilesComtroller.getUser(req);
+    const user = await FilesController.getUser(req);
 
     if (!user) {
       res.status(401).json({ error: 'Unauthorized' });
@@ -113,5 +113,5 @@ class FilesComtroller {
   }
 }
 
-export default FilesComtroller;
-module.exports = FilesComtroller;
+export default FilesController;
+module.exports = FilesController;
