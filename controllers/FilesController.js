@@ -54,10 +54,12 @@ class FilesController {
     if (parentId) {
       const file = await files.findOne({ _id: ObjectID(parentId), userId: user._id });
       if (!file) {
-        return res.status(400).json({ error: 'Parent not found' });
+        res.status(400).json({ error: 'Parent not found' });
+        return;
       }
       if (file.type !== 'folder') {
-        return res.status(400).json({ error: 'Parent is not a folder' });
+        res.status(400).json({ error: 'Parent is not a folder' });
+        return;
       }
     }
     if (type === 'folder') {
@@ -82,7 +84,7 @@ class FilesController {
     } else {
       const filePath = process.env.FOLDER_PATH || '/tmp/files_manager';
       const fileName = `${filePath}/${uuidv4()}`;
-      const buff = Buffer.from(data, 'base64', 'utf-8');
+      const buff = Buffer.from(data, 'base64');
 
       try {
         await fs.writeFile(fileName, buff, 'utf-8');
