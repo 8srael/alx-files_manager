@@ -190,13 +190,11 @@ class FilesController {
     }
     const { id } = req.params;
     const files = dbClient.db.collection('files');
-    const file = await files.findOne({ _id: ObjectID(id) });
+    const file = await files.findOne({ _id: ObjectID(id), userId: user._id });
     if (!file) {
       return res.status(404).json({ error: 'Not found' });
     }
-    if (file.userId !== user._id) {
-      return res.status(403).json({ error: 'Forbidden' });
-    }
+
     files.updateOne({ _id: ObjectID(id) }, { $set: { isPublic: true } });
     return res.status(200).json({
       id: file._id,
@@ -215,13 +213,11 @@ class FilesController {
     }
     const { id } = req.params;
     const files = dbClient.db.collection('files');
-    const file = await files.findOne({ _id: ObjectID(id) });
+    const file = await files.findOne({ _id: ObjectID(id), userId: user._id });
     if (!file) {
       return res.status(404).json({ error: 'Not found' });
     }
-    if (file.userId !== user._id) {
-      return res.status(403).json({ error: 'Forbidden' });
-    }
+
     files.updateOne({ _id: ObjectID(id) }, { $set: { isPublic: false } });
     return res.status(200).json({
       id: file._id,
