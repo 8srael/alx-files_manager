@@ -121,7 +121,7 @@ class FilesController {
     }
     const { id } = req.params;
     const files = dbClient.db.collection('files');
-    const file = await files.findOne({ _id: ObjectID(id) });
+    const file = await files.findOne({ _id: ObjectID(id), userId: user._id });
     if (!file) {
       res.status(404).json({ error: 'Not found' });
       return;
@@ -175,13 +175,62 @@ class FilesController {
           delete tmpFile.localPath;
           return tmpFile;
         });
-        // console.log(final);
         return res.status(200).json(final);
       }
       console.log('Error occured');
       return res.status(404).json({ error: 'Not found' });
     });
     return null;
+  }
+
+  static async putPublish(req, res) {
+    const user = await FilesController.getUser(req);
+    if (!user) {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+    const { id } = req.params;
+    const files = dbClient.db.collection('files');
+    const file = await files.findOne({ _id: ObjectID(id) });
+    if (!file) {
+      return res.status(404).json({ error: 'Not found' });
+    }
+    if (file.userId !== user._id) {
+      return res.status(403).json({ error: 'Forbidden' });
+    }
+    files.updateOne({ _id: ObjectID(id) }, { $set: { isPublic: true } });
+    return res.status(200).json({
+      id: file._id,
+      userId: file.userId,
+      name: file.name,
+      type: file.type,
+      isPublic: true,
+      parentId: file.parentId,
+    });
+  }
+
+  static async putUnpublish(req, res) {
+    const user = await FilesController.getUser(req);
+    if (!user) {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+    const { id } = req.params;
+    const files = dbClient.db.collection('files');
+    const file = await files.findOne({ _id: ObjectID(id) });
+    if (!file) {
+      return res.status(404).json({ error: 'Not found' });
+    }
+    if (file.userId !== user._id) {
+      return res.status(403).json({ error: 'Forbidden' });
+    }
+    files.updateOne({ _id: ObjectID(id) }, { $set: { isPublic: false } });
+    return res.status(200).json({
+      id: file._id,
+      userId: file.userId,
+      name: file.name,
+      type: file.type,
+      isPublic: false,
+      parentId: file.parentId,
+    });
   }
 }
 
